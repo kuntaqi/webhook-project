@@ -156,13 +156,13 @@ function App() {
                     cardId: `card_${Date.now()}`,
                     card: {
                         sections: sections.map(section => ({
-                            header: section.header,
-                            widgets: section.widgets.map(widget => {
+                            header: `<strong>${ section.header }</strong>`,
+                            widgets: section.widgets.map((widget, index) => {
                                 if (widget.type === 'image') {
                                     return {
                                         image: {
                                             imageUrl: widget.content,
-                                            altText: 'Message Image',
+                                            altText: `MessageImage-${index}`,
                                         },
                                     };
                                 }
