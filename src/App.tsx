@@ -140,13 +140,13 @@ function App() {
     };
 
     const createPlainTextMessage = (): string => {
-        const header = sections[0].header || 'New Message';
+        const header = sections[0].header;
         const content = sections[0].widgets
             .map(widget => widget.type === 'textParagraph' ? widget.content : '')
             .join('\n\n')
             .trim();
 
-        return `${header}: ${content}`;
+        return header == '' ? content : `${header}: ${content}`;
     };
 
     const createCardsMessage = () => {
