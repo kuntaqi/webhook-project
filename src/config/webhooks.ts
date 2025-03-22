@@ -11,6 +11,10 @@ export const webhookOptions: WebhookOption[] = [
     {
         name: "Ittaqullah",
         url: import.meta.env.VITE_ITTAQULLAH_WEBHOOK_URL
+    },
+    {
+        name: "Test (Bias)",
+        url: import.meta.env.VITE_TEST_BIAS
     }
 ];
 
