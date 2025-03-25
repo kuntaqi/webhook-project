@@ -192,7 +192,7 @@ export default function Dashboard() {
 
     const convertMarkdownToHtml = (markdown: string): string => {
         return markdown
-            .replace(/\{color:([\w#]+)}(.*?)\{\/color}/g, '<span style="color:$1" >$2</span>') // Color formatting
+            .replace(/\{color:([\w#]+)}(.*?)\{\/color}/g, '<span style="color:$1">$2</span>') // Color formatting
             .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>') // H3
             .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>') // H2
             .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>') // H1
