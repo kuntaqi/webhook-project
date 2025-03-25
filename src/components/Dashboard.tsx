@@ -1,7 +1,21 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
-import { MessageSquare, Send, Plus, Image as ImageIcon, Type, Trash, MoveUp, MoveDown, X, Smile, Upload, LogOut, Settings } from 'lucide-react';
+import {
+    MessageSquare,
+    Send,
+    Plus,
+    Image as ImageIcon,
+    Type,
+    Trash,
+    MoveUp,
+    MoveDown,
+    X,
+    Smile,
+    Upload,
+    LogOut,
+    Settings
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { HexColorPicker } from 'react-colorful';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
@@ -28,9 +42,9 @@ interface Section {
 export default function Dashboard() {
     const navigate = useNavigate();
     const { theme } = useTheme();
-    const [selectedWebhook, setSelectedWebhook] = useState<string>(webhookOptions[0]?.url || '');
-    const [messageFormat, setMessageFormat] = useState<MessageFormat>('cards');
-    const [sections, setSections] = useState<Section[]>([
+    const [ selectedWebhook, setSelectedWebhook ] = useState<string>(webhookOptions[ 0 ]?.url || '');
+    const [ messageFormat, setMessageFormat ] = useState<MessageFormat>('cards');
+    const [ sections, setSections ] = useState<Section[]>([
         {
             header: 'My Message',
             widgets: [
@@ -38,11 +52,11 @@ export default function Dashboard() {
             ],
         },
     ]);
-    const [showColorPicker, setShowColorPicker] = useState(false);
-    const [currentColor, setCurrentColor] = useState("#000000");
-    const [activeWidget, setActiveWidget] = useState<{ section: number; widget: number } | null>(null);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [uploading, setUploading] = useState(false);
+    const [ showColorPicker, setShowColorPicker ] = useState(false);
+    const [ currentColor, setCurrentColor ] = useState("#000000");
+    const [ activeWidget, setActiveWidget ] = useState<{ section: number; widget: number } | null>(null);
+    const [ showEmojiPicker, setShowEmojiPicker ] = useState(false);
+    const [ uploading, setUploading ] = useState(false);
 
     const handleSignOut = async () => {
         try {
@@ -67,8 +81,8 @@ export default function Dashboard() {
             setUploading(true);
 
             const fileExt = file.name.split('.').pop();
-            const fileName = `${uuidv4()}.${fileExt}`;
-            const filePath = `public/${fileName}`;
+            const fileName = `${ uuidv4() }.${ fileExt }`;
+            const filePath = `public/${ fileName }`;
 
             await supabase.storage.from('chat-images').upload(filePath, file);
 
@@ -86,7 +100,7 @@ export default function Dashboard() {
     };
 
     const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>, sectionIndex: number, widgetIndex: number) => {
-        const file = e.target.files?.[0];
+        const file = e.target.files?.[ 0 ];
         if (file) {
             uploadImage(file, sectionIndex, widgetIndex)
                 .then();
@@ -99,11 +113,11 @@ export default function Dashboard() {
             return;
         }
         setSections(current => {
-            const newSections = [...current];
-            newSections[sectionIndex] = {
-                ...newSections[sectionIndex],
+            const newSections = [ ...current ];
+            newSections[ sectionIndex ] = {
+                ...newSections[ sectionIndex ],
                 widgets: [
-                    ...newSections[sectionIndex].widgets,
+                    ...newSections[ sectionIndex ].widgets,
                     { type, content: type === 'image' ? '' : 'New paragraph', id: Date.now().toString() },
                 ],
             };
@@ -113,14 +127,14 @@ export default function Dashboard() {
 
     const updateWidget = (sectionIndex: number, widgetIndex: number, content: string) => {
         setSections(current => {
-            const newSections = [...current];
-            newSections[sectionIndex] = {
-                ...newSections[sectionIndex],
-                widgets: newSections[sectionIndex].widgets.map((widget, index) =>
+            const newSections = [ ...current ];
+            newSections[ sectionIndex ] = {
+                ...newSections[ sectionIndex ],
+                widgets: newSections[ sectionIndex ].widgets.map((widget, index) =>
                     index === widgetIndex ? { ...widget, content } : widget
                 ),
             };
-            return [...newSections];
+            return [ ...newSections ];
         });
 
         setTimeout(() => {
@@ -135,14 +149,14 @@ export default function Dashboard() {
             toast.error('Cannot remove widgets in plain text mode');
             return;
         }
-        if (sections[sectionIndex].widgets.length === 1) {
+        if (sections[ sectionIndex ].widgets.length === 1) {
             toast.error('Must have at least one text widget');
             return;
         }
         setSections(current => {
-            const newSections = [...current];
-            newSections[sectionIndex].widgets.splice(widgetIndex, 1);
-            return [...newSections];
+            const newSections = [ ...current ];
+            newSections[ sectionIndex ].widgets.splice(widgetIndex, 1);
+            return [ ...newSections ];
         });
     };
 
@@ -152,13 +166,13 @@ export default function Dashboard() {
             return;
         }
         setSections(current => {
-            const newSections = [...current];
-            const widgets = [...newSections[sectionIndex].widgets];
+            const newSections = [ ...current ];
+            const widgets = [ ...newSections[ sectionIndex ].widgets ];
             const newIndex = direction === 'up' ? widgetIndex - 1 : widgetIndex + 1;
 
             if (newIndex >= 0 && newIndex < widgets.length) {
-                [widgets[widgetIndex], widgets[newIndex]] = [widgets[newIndex], widgets[widgetIndex]];
-                newSections[sectionIndex].widgets = widgets;
+                [ widgets[ widgetIndex ], widgets[ newIndex ] ] = [ widgets[ newIndex ], widgets[ widgetIndex ] ];
+                newSections[ sectionIndex ].widgets = widgets;
             }
 
             return newSections;
@@ -167,9 +181,9 @@ export default function Dashboard() {
 
     const updateSectionHeader = (sectionIndex: number, header: string) => {
         setSections(current => {
-            const newSections = [...current];
-            newSections[sectionIndex] = {
-                ...newSections[sectionIndex],
+            const newSections = [ ...current ];
+            newSections[ sectionIndex ] = {
+                ...newSections[ sectionIndex ],
                 header,
             };
             return newSections;
@@ -178,7 +192,7 @@ export default function Dashboard() {
 
     const convertMarkdownToHtml = (markdown: string): string => {
         return markdown
-            .replace(/\{color:([\w#]+)\}(.*?)\{\/color\}/g, '<font color="$1">$2</font>') // Color formatting
+            .replace(/\{color:([\w#]+)}(.*?)\{\/color}/g, '<span style="color:$1" >$2</span>') // Color formatting
             .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>') // H3
             .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>') // H2
             .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>') // H1
@@ -186,56 +200,55 @@ export default function Dashboard() {
             .replace(/__(.*?)__/g, '<b>$1</b>') // Bold (__text__)
             .replace(/\*(.*?)\*/g, '<i>$1</i>') // Italic (*text*)
             .replace(/_(.*?)_/g, '<i>$1</i>') // Italic (_text_)
-            .replace(/\[([^\]]+)]\(([^)]+)\)/g, '<a href="$2">$1</a>') // Links
-            .replace(/(?:\r\n|\r|\n)/g, '<br>'); // Newline to <br>
+            .replace(/\[([^\]]+)]\(([^)]+)\)/g, (_, text, url = '#') => `<a href="${ url }">${ text }</a>`) // Links
+            .replace(/\r\n|\r|\n/g, '<br>'); // Newline to <br>
     };
 
-
     const handleEmojiClick = (emojiData: any, sectionIndex: number, widgetIndex: number) => {
-        const widget = sections[sectionIndex].widgets[widgetIndex];
+        const widget = sections[ sectionIndex ].widgets[ widgetIndex ];
         const newContent = widget.content + emojiData.emoji;
         updateWidget(sectionIndex, widgetIndex, newContent);
         setShowEmojiPicker(false);
     };
 
     const insertColorText = (sectionIndex: number, widgetIndex: number, color: string) => {
-        const widget = sections[sectionIndex].widgets[widgetIndex];
+        const widget = sections[ sectionIndex ].widgets[ widgetIndex ];
         if (widget.type !== 'textParagraph') return;
 
-        const textarea = document.querySelector(`textarea[data-section="${sectionIndex}"][data-widget="${widgetIndex}"]`) as HTMLTextAreaElement;
+        const textarea = document.querySelector(`textarea[data-section="${ sectionIndex }"][data-widget="${ widgetIndex }"]`) as HTMLTextAreaElement;
         if (!textarea) return;
 
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const text = widget.content;
-        const selectedText = text.substring(start, end) || 'colored text'; // Default text if nothing is selected
-        const colorTag = `{color:${color}}${selectedText}{/color}`;
+        if (messageFormat == 'cards') {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = widget.content;
+            const selectedText = text.substring(start, end);
+            const colorTag = `{color:${ color }}${ selectedText }{/color}`;
+            const newContent = text.substring(0, start) + colorTag + text.substring(end)
+            updateWidget(sectionIndex, widgetIndex, newContent);
+        } else {
+            toast.error('Can\'t change the color when using plain text mode');
+        }
 
-        const newContent = text.substring(0, start) + colorTag + text.substring(end);
-
-        // Update widget content and close color picker
-        updateWidget(sectionIndex, widgetIndex, newContent);
-
-        // Delay closing the picker to ensure text update happens first
-        setTimeout(() => setShowColorPicker(false), 100);
+        setShowColorPicker(false);
     };
 
 
     const createPlainTextMessage = (): string => {
-        const header = sections[0].header || 'New Message';
-        const content = sections[0].widgets
+        const header = sections[ 0 ].header
+        const content = sections[ 0 ].widgets
             .map(widget => widget.type === 'textParagraph' ? widget.content : '')
             .join('\n\n')
             .trim();
 
-        return `${header}: ${content}`;
+        return header ? `${ header }: ${ content }` : content;
     };
 
     const createCardsMessage = () => {
         return {
             cardsV2: [
                 {
-                    cardId: `card_${Date.now()}`,
+                    cardId: `card_${ Date.now() }`,
                     card: {
                         sections: sections.map(section => ({
                             header: section.header,
@@ -267,7 +280,7 @@ export default function Dashboard() {
             return;
         }
 
-        if (sections[0].widgets.length === 0) {
+        if (sections[ 0 ].widgets.length === 0) {
             toast.error('Please add at least one widget');
             return;
         }
@@ -297,23 +310,24 @@ export default function Dashboard() {
                 <div className="py-6">
                     <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center gap-3">
-                            <MessageSquare className="w-8 h-8 text-accent" />
-                            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Google Chat Webhook Sender</h1>
+                            <MessageSquare className="w-8 h-8 text-accent"/>
+                            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Google Chat Webhook
+                                Sender</h1>
                         </div>
                         <div className="flex items-center gap-2">
-                            <ThemeToggle />
+                            <ThemeToggle/>
                             <button
-                                onClick={() => navigate('/admin/profile')}
+                                onClick={ () => navigate('/admin/profile') }
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-text-primary bg-card border border-border rounded-md hover:bg-secondary transition-colors"
                             >
-                                <Settings size={16} />
+                                <Settings size={ 16 }/>
                                 <span className="hidden sm:inline">Profile Settings</span>
                             </button>
                             <button
-                                onClick={handleSignOut}
+                                onClick={ handleSignOut }
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-text-primary bg-card border border-border rounded-md hover:bg-secondary transition-colors"
                             >
-                                <LogOut size={16} />
+                                <LogOut size={ 16 }/>
                                 <span className="hidden sm:inline">Sign Out</span>
                             </button>
                         </div>
@@ -327,15 +341,15 @@ export default function Dashboard() {
                                 Google Chat Group
                             </label>
                             <select
-                                value={selectedWebhook}
-                                onChange={(e) => setSelectedWebhook(e.target.value)}
+                                value={ selectedWebhook }
+                                onChange={ (e) => setSelectedWebhook(e.target.value) }
                                 className="w-full px-4 pr-10 py-2 border border-border rounded-md focus:ring-2 focus:ring-accent focus:border-transparent bg-card dark:bg-gray-800 text-text-primary"
                             >
-                                {webhookOptions.map((option) => (
-                                    <option key={option.url} value={option.url}>
-                                        {option.name}
+                                { webhookOptions.map((option) => (
+                                    <option key={ option.url } value={ option.url }>
+                                        { option.name }
                                     </option>
-                                ))}
+                                )) }
                             </select>
                         </div>
                         <div>
@@ -344,22 +358,22 @@ export default function Dashboard() {
                             </label>
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => setMessageFormat('plain')}
-                                    className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                                    onClick={ () => setMessageFormat('plain') }
+                                    className={ `flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                                         messageFormat === 'plain'
                                             ? 'bg-accent text-white'
                                             : 'bg-card dark:bg-gray-800 text-text-primary border border-border hover:bg-secondary'
-                                    }`}
+                                    }` }
                                 >
                                     Plain Text
                                 </button>
                                 <button
-                                    onClick={() => setMessageFormat('cards')}
-                                    className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                                    onClick={ () => setMessageFormat('cards') }
+                                    className={ `flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                                         messageFormat === 'cards'
                                             ? 'bg-accent text-white'
                                             : 'bg-card dark:bg-gray-800 text-text-primary border border-border hover:bg-secondary'
-                                    }`}
+                                    }` }
                                 >
                                     Cards
                                 </button>
@@ -368,56 +382,56 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {sections.map((section, sectionIndex) => (
-                    <div key={sectionIndex} className="bg-card rounded-lg shadow-md p-4 sm:p-6 mb-6">
+                { sections.map((section, sectionIndex) => (
+                    <div key={ sectionIndex } className="bg-card rounded-lg shadow-md p-4 sm:p-6 mb-6">
                         <div className="mb-6">
                             <label className="block text-sm font-medium text-text-primary mb-2">
                                 Section Header
                             </label>
                             <input
                                 type="text"
-                                value={section.header}
-                                onChange={(e) => updateSectionHeader(sectionIndex, e.target.value)}
+                                value={ section.header }
+                                onChange={ (e) => updateSectionHeader(sectionIndex, e.target.value) }
                                 className="w-full px-4 py-2 border border-border rounded-md bg-card dark:bg-gray-800 text-text-primary focus:ring-2 focus:ring-accent focus:border-transparent"
                                 placeholder="Enter section header..."
                             />
                         </div>
 
-                        {section.widgets.map((widget, widgetIndex) => (
-                            <div key={widget.id} className="mb-6 border border-border rounded-lg p-4">
+                        { section.widgets.map((widget, widgetIndex) => (
+                            <div key={ widget.id } className="mb-6 border border-border rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-sm font-medium text-text-primary">
-                                        {widget.type === 'image' ? 'Image Upload' : 'Text Content'}
+                                        { widget.type === 'image' ? 'Image Upload' : 'Text Content' }
                                     </span>
                                     <div className="flex gap-2">
-                                        {messageFormat === 'cards' && (
+                                        { messageFormat === 'cards' && (
                                             <>
                                                 <button
-                                                    onClick={() => moveWidget(sectionIndex, widgetIndex, 'up')}
-                                                    disabled={widgetIndex === 0}
+                                                    onClick={ () => moveWidget(sectionIndex, widgetIndex, 'up') }
+                                                    disabled={ widgetIndex === 0 }
                                                     className="p-1 text-text-secondary hover:text-text-primary disabled:opacity-50 transition-colors"
                                                 >
-                                                    <MoveUp size={16} />
+                                                    <MoveUp size={ 16 }/>
                                                 </button>
                                                 <button
-                                                    onClick={() => moveWidget(sectionIndex, widgetIndex, 'down')}
-                                                    disabled={widgetIndex === section.widgets.length - 1}
+                                                    onClick={ () => moveWidget(sectionIndex, widgetIndex, 'down') }
+                                                    disabled={ widgetIndex === section.widgets.length - 1 }
                                                     className="p-1 text-text-secondary hover:text-text-primary disabled:opacity-50 transition-colors"
                                                 >
-                                                    <MoveDown size={16} />
+                                                    <MoveDown size={ 16 }/>
                                                 </button>
                                                 <button
-                                                    onClick={() => removeWidget(sectionIndex, widgetIndex)}
+                                                    onClick={ () => removeWidget(sectionIndex, widgetIndex) }
                                                     className="p-1 text-danger hover:text-danger-hover transition-colors"
                                                 >
-                                                    <Trash size={16} />
+                                                    <Trash size={ 16 }/>
                                                 </button>
                                             </>
-                                        )}
+                                        ) }
                                     </div>
                                 </div>
 
-                                {widget.type === 'image' ? (
+                                { widget.type === 'image' ? (
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-4">
                                             <label className="flex-1">
@@ -425,103 +439,109 @@ export default function Dashboard() {
                                                     <input
                                                         type="file"
                                                         accept="image/*"
-                                                        onChange={(e) => handleFileUpload(e, sectionIndex, widgetIndex)}
+                                                        onChange={ (e) => handleFileUpload(e, sectionIndex, widgetIndex) }
                                                         className="hidden"
-                                                        disabled={uploading}
+                                                        disabled={ uploading }
                                                     />
-                                                    <div className="flex items-center justify-center w-full h-32 px-4 transition bg-card dark:bg-gray-800 border-2 border-border border-dashed rounded-md appearance-none cursor-pointer hover:border-accent focus:outline-none">
+                                                    <div
+                                                        className="flex items-center justify-center w-full h-32 px-4 transition bg-card dark:bg-gray-800 border-2 border-border border-dashed rounded-md appearance-none cursor-pointer hover:border-accent focus:outline-none">
                                                         <div className="flex flex-col items-center space-y-2">
-                                                            <Upload className="w-6 h-6 text-text-secondary" />
+                                                            <Upload className="w-6 h-6 text-text-secondary"/>
                                                             <span className="text-sm text-text-secondary">
-                                                                {uploading ? 'Uploading...' : 'Click to upload image'}
+                                                                { uploading ? 'Uploading...' : 'Click to upload image' }
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </label>
-                                            {widget.content && (
+                                            { widget.content && (
                                                 <div className="w-32 h-32 relative">
                                                     <img
-                                                        src={widget.content}
+                                                        src={ widget.content }
                                                         alt="Uploaded preview"
                                                         className="w-full h-full object-cover rounded-md"
                                                     />
                                                 </div>
-                                            )}
+                                            ) }
                                         </div>
-                                        {widget.content && (
+                                        { widget.content && (
                                             <input
                                                 type="text"
-                                                value={widget.content}
+                                                value={ widget.content }
                                                 readOnly
                                                 className="w-full px-4 py-2 text-sm bg-secondary border border-border rounded-md text-text-secondary"
                                             />
-                                        )}
+                                        ) }
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
                                         <div className="flex flex-wrap gap-2 mb-2">
                                             <button
-                                                onClick={() => {
+                                                onClick={ () => {
                                                     setActiveWidget({ section: sectionIndex, widget: widgetIndex });
                                                     setShowColorPicker(true);
                                                     setShowEmojiPicker(false);
-                                                }}
+                                                } }
                                                 className="px-3 py-1 text-sm rounded border border-border hover:bg-secondary flex items-center gap-2 bg-card dark:bg-gray-800"
                                             >
                                                 <div
                                                     className="w-4 h-4 rounded-full"
-                                                    style={{ backgroundColor: currentColor }}
+                                                    style={ { backgroundColor: currentColor } }
                                                 />
                                                 Choose Color
                                             </button>
                                             <button
-                                                onClick={() => {
+                                                onClick={ () => {
                                                     setActiveWidget({ section: sectionIndex, widget: widgetIndex });
                                                     setShowEmojiPicker(!showEmojiPicker);
                                                     setShowColorPicker(false);
-                                                }}
+                                                } }
                                                 className="px-3 py-1 text-sm rounded border border-border hover:bg-secondary flex items-center gap-2 bg-card dark:bg-gray-800"
                                             >
-                                                <Smile size={16} />
+                                                <Smile size={ 16 }/>
                                                 Add Emoji
                                             </button>
-                                            {showEmojiPicker && activeWidget?.section === sectionIndex && activeWidget?.widget === widgetIndex && (
+                                            { showEmojiPicker && activeWidget?.section === sectionIndex && activeWidget?.widget === widgetIndex && (
                                                 <div className="absolute z-20">
                                                     <EmojiPicker
-                                                        onEmojiClick={(emojiData) => handleEmojiClick(emojiData, sectionIndex, widgetIndex)}
-                                                        theme={theme === 'dark' ? 'dark' as Theme : 'light' as Theme}
+                                                        onEmojiClick={ (emojiData) => handleEmojiClick(emojiData, sectionIndex, widgetIndex) }
+                                                        theme={ theme === 'dark' ? 'dark' as Theme : 'light' as Theme }
                                                     />
                                                 </div>
-                                            )}
-                                            {showColorPicker && activeWidget?.section === sectionIndex && activeWidget?.widget === widgetIndex && (
+                                            ) }
+                                            { showColorPicker && activeWidget?.section === sectionIndex && activeWidget?.widget === widgetIndex && (
                                                 <div className="absolute z-10 bg-card p-4 rounded-lg shadow-lg">
                                                     <div className="flex justify-between items-center mb-2">
                                                         <span className="text-sm font-medium text-text-primary">Color Picker</span>
                                                         <button
-                                                            onClick={() => setShowColorPicker(false)}
+                                                            onClick={ () => setShowColorPicker(false) }
                                                             className="text-text-secondary hover:text-text-primary"
                                                         >
-                                                            <X size={16} />
+                                                            <X size={ 16 }/>
                                                         </button>
                                                     </div>
                                                     <HexColorPicker
-                                                        color={currentColor}
-                                                        onChange={(color) => {
+                                                        color={ currentColor }
+                                                        onChange={ (color) => {
                                                             setCurrentColor(color);
                                                             insertColorText(sectionIndex, widgetIndex, color);
-                                                        }}
-                                                        onMouseLeave={() => setShowColorPicker(false)}
+                                                        } }
+                                                        onMouseLeave={ () => setShowColorPicker(false) }
                                                     />
                                                 </div>
-                                            )}
+                                            ) }
                                         </div>
-                                        <div data-color-mode={theme}>
+                                        <div data-color-mode={ theme }>
                                             <MDEditor
-                                                value={widget.content}
-                                                onChange={(val) => updateWidget(sectionIndex, widgetIndex, val || '')}
+                                                value={ widget.content }
+                                                onChange={ (val) => updateWidget(sectionIndex, widgetIndex, val || '') }
                                                 preview="edit"
                                                 className="bg-card dark:bg-gray-800"
+                                                textareaProps={ {
+                                                    ...({} as React.TextareaHTMLAttributes<HTMLTextAreaElement>),
+                                                    'data-section': sectionIndex.toString(),
+                                                    'data-widget': widgetIndex.toString()
+                                                } as any }
                                             />
                                         </div>
                                         <div className="text-sm text-text-secondary">
@@ -536,38 +556,38 @@ export default function Dashboard() {
                                             </ul>
                                         </div>
                                     </div>
-                                )}
+                                ) }
                             </div>
-                        ))}
+                        )) }
 
-                        {messageFormat === 'cards' && (
+                        { messageFormat === 'cards' && (
                             <div className="flex flex-wrap gap-2">
                                 <button
-                                    onClick={() => addWidget(sectionIndex, 'textParagraph')}
+                                    onClick={ () => addWidget(sectionIndex, 'textParagraph') }
                                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-text-primary bg-card dark:bg-gray-800 border border-border rounded-md hover:bg-secondary transition-colors"
                                 >
-                                    <Plus size={16} />
-                                    <Type size={16} />
+                                    <Plus size={ 16 }/>
+                                    <Type size={ 16 }/>
                                     <span className="hidden sm:inline">Add Text</span>
                                 </button>
                                 <button
-                                    onClick={() => addWidget(sectionIndex, 'image')}
+                                    onClick={ () => addWidget(sectionIndex, 'image') }
                                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-text-primary bg-card dark:bg-gray-800 border border-border rounded-md hover:bg-secondary transition-colors"
                                 >
-                                    <Plus size={16} />
-                                    <ImageIcon size={16} />
+                                    <Plus size={ 16 }/>
+                                    <ImageIcon size={ 16 }/>
                                     <span className="hidden sm:inline">Add Image</span>
                                 </button>
                             </div>
-                        )}
+                        ) }
                     </div>
-                ))}
+                )) }
 
                 <button
-                    onClick={sendMessage}
+                    onClick={ sendMessage }
                     className="flex items-center justify-center gap-2 w-full bg-accent text-white py-3 px-6 rounded-md hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-colors"
                 >
-                    <Send className="w-5 h-5" />
+                    <Send className="w-5 h-5"/>
                     Send Message
                 </button>
             </div>
